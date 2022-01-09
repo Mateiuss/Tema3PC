@@ -7,6 +7,25 @@ void addNull(char *p)
     }  
 }
 
+int min(int x, int y)
+{
+    if (x < y) {
+        return x;
+    }
+    return y;
+}
+
+int charToInt(char *num)
+{
+    int res = 0;
+    int pow = 1;
+    for (int i = strlen(num) - 1; i >= 0; i--) {
+        res = pow * (num[i] - '0') + res;
+        pow *= 10;
+    }
+    return res;
+}
+
 BMP *editCommand(char *p, BMP *bmp)
 {
     FILE *fp = fopen(p, "rb");
@@ -96,5 +115,50 @@ int saveCommand(char *p, BMP *bmp)
     }
 
     fclose(fp);
+    return 1;
+}
+
+void freeBMP(BMP *bmp)
+{
+    free(bmp->fileH);
+    free(bmp->infoH);
+    for (int i = 0; i < bmp->img->height; i++) {
+        free(bmp->img->pix[i]);
+    }
+    free(bmp->img->pix);
+    free(bmp->img);
+    free(bmp);
+}
+
+int insertCommand(BMP *bmp, char *p, int x, int y)
+{
+    BMP *insBMP;
+    insBMP = malloc(sizeof(BMP));
+    if (insBMP == NULL) {
+        return 0;
+    }
+    insBMP = editCommand(p, insBMP);
+    if (insBMP == NULL) {
+        return 0;
+    }
+
+    int w1 = bmp->img->width;
+    int h1 = bmp->img->height;
+    int w2 = insBMP->img->width;
+    int h2 = insBMP->img->height;
+
+    int x1 = h1 - x - 1;
+    int x2 = h2 - 1;
+
+    for ( ; x1 >= 0 && x2 >= 0; x1--, x2--) {
+        int k1 = y, k2 = 0;
+        for ( ; k1 < w1 && k2 < w2; k1++, k2++) {
+            bmp->img->pix[x1][k1].R = insBMP->img->pix[x2][k2].R;
+            bmp->img->pix[x1][k1].G = insBMP->img->pix[x2][k2].G;
+            bmp->img->pix[x1][k1].B = insBMP->img->pix[x2][k2].B;
+        }
+    }
+
+    freeBMP(insBMP);
     return 1;
 }

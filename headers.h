@@ -10,3 +10,9 @@ void addNull(char *);
 BMP * editCommand(char *, BMP *);
 
 int saveCommand(char *, BMP *);
+
+void freeBMP(BMP *);
+
+int insertCommand(BMP *, char *, int, int);
+
+int charToInt(char *);

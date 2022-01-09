@@ -39,18 +39,17 @@ int main()
         }
         else if (strcmp("quit", p) == 0) { // quit
             free(command);
-            free(bmp->fileH);
-            free(bmp->infoH);
-            for (int i = 0; i < bmp->img->height; i++) {
-                free(bmp->img->pix[i]);
-            }
-            free(bmp->img->pix);
-            free(bmp->img);
-            free(bmp);
+            freeBMP(bmp);
             return 0;
         }
         else if (strcmp("insert", p) == 0) {
-            
+            p = strtok(NULL, " ");
+            char *y , *x;
+            y = strtok(NULL, " ");
+            x = strtok(NULL, " ");
+            if (insertCommand(bmp, p, charToInt(x), charToInt(y)) == 0) {
+                return 2;
+            }
         }
     }
 }
