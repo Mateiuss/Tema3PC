@@ -47,4 +47,10 @@ typedef struct
     bmp_infoheader *infoH;
 } BMP;
 
+typedef struct 
+{
+    pixel color;
+    char width;
+} Pen;
+
 #pragma pack()

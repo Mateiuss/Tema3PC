@@ -7,12 +7,11 @@ void addNull(char *p)
     }  
 }
 
-int min(int x, int y)
+void swap(int *x, int *y)
 {
-    if (x < y) {
-        return x;
-    }
-    return y;
+    int aux = *x;
+    *x = *y;
+    *y = aux;
 }
 
 int charToInt(char *num)
@@ -161,4 +160,93 @@ int insertCommand(BMP *bmp, char *p, int x, int y)
 
     freeBMP(insBMP);
     return 1;
+}
+
+void fillPenStroke(BMP *bmp, Pen *pen, int x, int y)
+{
+    int height = bmp->img->height;
+    int width = bmp->img->width;
+    int side = pen->width;
+    x = x - (side - 1) / 2;
+    y = y - (side - 1) / 2;
+    for (int i = x; i < x + side; i++) {
+        for (int j = y; j < y + side; j++) {
+            if (i >= 0 && i < height && j >= 0 && j < width) {
+                bmp->img->pix[i][j].R = pen->color.R;
+                bmp->img->pix[i][j].G = pen->color.G;
+                bmp->img->pix[i][j].B = pen->color.B;
+            }
+        }
+    }
+}
+
+void drawLine(BMP *bmp, Pen *pen, int x1, int y1, int x2,int y2)
+{
+    int height = bmp->img->height;
+    int width = bmp->img->width;
+
+    fillPenStroke(bmp, pen, height - 1 - x1, y1);
+    fillPenStroke(bmp, pen, height - 1 - x2, y2);
+
+    if (x1 == x2) {
+        if (y2 < y1) {
+            swap(&y1, &y2);
+        }
+        for (int i = y1; i <= y2; i++) {
+            fillPenStroke(bmp, pen, height - 1 - x1, i);
+        }
+    }
+    else if (y1 == y2) {
+        if (x2 < x1) {
+            swap(&x1, &x2);
+        }
+        for (int i = x1; i <= x2; i++) {
+            fillPenStroke(bmp, pen, height - 1 - i, y1);
+        }
+    }
+    else {
+        int intervalX = abs(x2 - x1);
+        int intervalY = abs(y2 - y1);
+
+        if (intervalX > intervalY) {
+            if (x2 < x1) {
+                swap(&x2, &x1);
+                swap(&y2, &y1);
+            }
+            for (int i = x1 + 1; i < x2; i++) {
+                int j = ((y2 - y1) * (i - x1) + y1 * (x2 - x1)) / (x2 - x1);
+                if (j >= 0 && j < width) {
+                    fillPenStroke(bmp, pen, height - 1 - i, j);
+                }
+            }
+        } else {
+            if (y2 < y1) {
+                swap(&y2, &y1);
+                swap(&x2, &x1);
+            }
+            for (int i = y1 + 1; i < y2; i++) {
+                int j = ((x2 - x1) * (i - y1) + x1 * (y2 - y1)) / (y2 - y1);
+                if (j >= 0 && j < height) {
+                    fillPenStroke(bmp, pen, height - 1 - j, i);
+                }
+            }
+        }
+    }
+}
+
+void drawRectangle(BMP *bmp, Pen *pen, int x1, int y1, int height, int width) {
+    int x2 = x1 + height, y2 = y1;
+    int x3 = x2, y3 = y1 + width;
+    int x4 = x1, y4 = y3;
+
+    drawLine(bmp, pen, x1, y1, x2, y2);
+    drawLine(bmp, pen, x2, y2, x3, y3);
+    drawLine(bmp, pen, x3, y3, x4, y4);
+    drawLine(bmp, pen, x1, y1, x4, y4);
+}
+
+void drawTriangle(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2, int x3, int y3) {
+    drawLine(bmp, pen, x1, y1, x2, y2);
+    drawLine(bmp, pen, x2, y2, x3, y3);
+    drawLine(bmp, pen, x3, y3, x1, y1);
 }
