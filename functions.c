@@ -245,8 +245,43 @@ void drawRectangle(BMP *bmp, Pen *pen, int x1, int y1, int height, int width) {
     drawLine(bmp, pen, x1, y1, x4, y4);
 }
 
-void drawTriangle(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2, int x3, int y3) {
+void drawTriangle(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2, int x3, int y3)
+{
     drawLine(bmp, pen, x1, y1, x2, y2);
     drawLine(bmp, pen, x2, y2, x3, y3);
     drawLine(bmp, pen, x3, y3, x1, y1);
+}
+
+int samePixel(BMP *bmp, pixel *color, int x, int y)
+{
+    if (bmp->img->pix[x][y].R != color->R)
+        return 0;
+    if (bmp->img->pix[x][y].G != color->G)
+        return 0;
+    if (bmp->img->pix[x][y].B != color->B)
+        return 0;
+    return 1;
+}
+
+void fill(BMP *bmp, Pen *pen, pixel *color, int x, int y)
+{
+    bmp->img->pix[x][y].B = pen->color.B;
+    bmp->img->pix[x][y].G = pen->color.G;
+    bmp->img->pix[x][y].R = pen->color.R;
+
+    int height = bmp->img->height;
+    int width = bmp->img->width;
+
+    if (x - 1 >= 0 && samePixel(bmp, color, x - 1, y)) {
+        fill(bmp, pen, color, x - 1, y);
+    }
+    if (x + 1 < height && samePixel(bmp, color, x + 1, y)) {
+        fill(bmp, pen, color, x + 1, y);
+    }
+    if (y - 1 >= 0 && samePixel(bmp, color, x, y - 1)) {
+        fill(bmp, pen, color, x, y - 1);
+    }
+    if (y + 1 < width && samePixel(bmp, color, x, y + 1)) {
+        fill(bmp, pen, color, x, y + 1);
+    }
 }

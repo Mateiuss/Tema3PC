@@ -119,5 +119,17 @@ int main()
                 drawTriangle(bmp, pen, x1, y1, x2, y2, x3, y3);
             }
         }
+        else if (strcmp("fill", p) == 0) {
+            p = strtok(NULL, " ");
+            int y = charToInt(p);
+            p = strtok(NULL, " ");
+            int x = charToInt(p);
+            int height = bmp->img->height;
+            pixel color;
+            color.R = bmp->img->pix[height - x - 1][y].R;
+            color.G = bmp->img->pix[height - x - 1][y].G;
+            color.B = bmp->img->pix[height - x - 1][y].B;
+            fill(bmp, pen, &color, height - x - 1, y);
+        }
     }
 }
