@@ -24,6 +24,6 @@ void drawLine(BMP *, Pen *, int, int, int, int);
 
 void drawRectangle(BMP *, Pen *, int, int, int, int);
 
-void drawTriangle(BMP *, Pen *, int, int, int, int, int, int);
+void drawTriangle(BMP *, Pen *, Point, Point, Point);
 
 void fill(BMP *, Pen *, pixel *, int, int);

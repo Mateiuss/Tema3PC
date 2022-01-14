@@ -47,4 +47,8 @@ typedef struct {
     int width;
 } Pen;
 
+typedef struct {
+    int x, y;
+} Point;
+
 #pragma pack()

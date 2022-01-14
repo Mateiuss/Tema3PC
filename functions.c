@@ -234,10 +234,10 @@ void drawRectangle(BMP *bmp, Pen *pen, int x1, int y1, int height, int width) {
     drawLine(bmp, pen, x1, y1, x4, y4);
 }
 
-void drawTriangle(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2, int x3, int y3) {
-    drawLine(bmp, pen, x1, y1, x2, y2);
-    drawLine(bmp, pen, x2, y2, x3, y3);
-    drawLine(bmp, pen, x3, y3, x1, y1);
+void drawTriangle(BMP *bmp, Pen *pen, Point p1, Point p2, Point p3) {
+    drawLine(bmp, pen, p1.x, p1.y, p2.x, p2.y);
+    drawLine(bmp, pen, p2.x, p2.y, p3.x, p3.y);
+    drawLine(bmp, pen, p3.x, p3.y, p1.x, p1.y);
 }
 
 int samePixel(BMP *bmp, pixel *color, int x, int y) {

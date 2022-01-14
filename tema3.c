@@ -102,6 +102,7 @@ int main() {
                 drawRectangle(bmp, pen, x1, y1, height, width);
             } else if (strcmp("triangle", p) == 0) {
                 int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
+                Point p1, p2, p3;
                 p = strtok(NULL, " ");
                 y1 = charToInt(p);
                 p = strtok(NULL, " ");
@@ -114,7 +115,13 @@ int main() {
                 y3 = charToInt(p);
                 p = strtok(NULL, " ");
                 x3 = charToInt(p);
-                drawTriangle(bmp, pen, x1, y1, x2, y2, x3, y3);
+                p1.x = x1;
+                p1.y = y1;
+                p2.x = x2;
+                p2.y = y2;
+                p3.x = x3;
+                p3.y = y3;
+                drawTriangle(bmp, pen, p1, p2, p3);
             }
         } else if (strcmp("fill", p) == 0) {
             p = strtok(NULL, " ");
