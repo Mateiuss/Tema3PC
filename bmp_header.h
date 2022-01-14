@@ -1,3 +1,5 @@
+/* Dudu Matei-Ioan 313CB */
+
 /* Tells the compiler not to add padding for these structs. This may
    be useful when reading/writing to binary files.
    http://stackoverflow.com/questions/3318410/pragma-pack-effect
@@ -26,29 +28,5 @@ typedef struct {
     unsigned int   biClrUsed;
     unsigned int   biClrImportant;
 } bmp_infoheader;
-
-typedef struct {
-    unsigned char B, G, R;
-} pixel;
-
-typedef struct {
-    pixel **pix;
-    int height, width;
-} Image;
-
-typedef struct {
-    Image *img;
-    bmp_fileheader *fileH;
-    bmp_infoheader *infoH;
-} BMP;
-
-typedef struct {
-    pixel color;
-    int width;
-} Pen;
-
-typedef struct {
-    int x, y;
-} Point;
 
 #pragma pack()
