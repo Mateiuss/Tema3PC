@@ -1,14 +1,17 @@
+/* Dudu Matei-Ioan 313CB */
+
 #include "headers.h"
 
 int main() {
-    // Declar un element din structura BMP (continand imaginea si headerele)
-
+    // Declar un pointer de tip BMP si ii aloc memorie
     BMP *bmp = NULL;
     bmp = malloc(sizeof(BMP));
     if (bmp == NULL) {
         return 2;
     }
 
+    /* Declar un pointer de tip Pen, ii aloc memorie si ii setez
+    valorile standard */
     Pen *pen = NULL;
     pen = malloc(sizeof(Pen));
     if (pen == NULL) {
@@ -19,23 +22,20 @@ int main() {
     pen->color.B = 0;
     pen->width = 1;
 
-    // Sir in care se memoreaza fiecare linie citita
-    // + aloc memorie pentru el
-
+    // Sir alocat dinamic in care se memoreaza fiecare linie citita din stdin
     char * command = NULL;
     command = malloc(MAXLEN * sizeof(char));
     if (command == NULL) {
         return 2;
     }
 
-    // Structura repetitiva care ruleaza cat timp se poate citi din fisier
-    // Parser
+    // Structura repetitiva care ruleaza cat timp se poate citi din stdin
     while (fgets(command, MAXLEN, stdin)) {
-        addNull(command);  // Adaug NULL in locul \n de la finalul sirului
+        // Adaug \0 in loc de \n de la sfarsitul sirului
+        addNull(command);
 
         char *p = strtok(command, " ");
 
-        // Parsarea comenzilor
         if (strcmp("edit", p) == 0) {  // edit
             p = strtok(NULL, " ");
             bmp = editCommand(p, bmp);
@@ -52,7 +52,7 @@ int main() {
             freeBMP(bmp);
             free(pen);
             return 0;
-        } else if (strcmp("insert", p) == 0) {
+        } else if (strcmp("insert", p) == 0) {  // insert
             p = strtok(NULL, " ");
             char *photo = p;
             int x = 0, y = 0;
@@ -63,22 +63,22 @@ int main() {
             if (insertCommand(bmp, photo, x, y) == 0) {
                 return 2;
             }
-        } else if (strcmp("set", p) == 0) {
+        } else if (strcmp("set", p) == 0) {  // set
             p = strtok(NULL, " ");
-            if (strcmp("draw_color", p) == 0) {
+            if (strcmp("draw_color", p) == 0) {  // set draw_color
                 p = strtok(NULL, " ");
                 pen->color.R = charToInt(p);
                 p = strtok(NULL, " ");
                 pen->color.G = charToInt(p);
                 p = strtok(NULL, " ");
                 pen->color.B = charToInt(p);
-            } else if (strcmp("line_width", p) == 0) {
+            } else if (strcmp("line_width", p) == 0) {  // set line_width
                 p = strtok(NULL, " ");
                 pen->width = charToInt(p);
             }
-        } else if (strcmp("draw", p) == 0) {
+        } else if (strcmp("draw", p) == 0) {  // draw
             p = strtok(NULL, " ");
-            if (strcmp("line", p) == 0) {
+            if (strcmp("line", p) == 0) {  // draw line
                 int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
                 p = strtok(NULL, " ");
                 y1 = charToInt(p);
@@ -89,7 +89,7 @@ int main() {
                 p = strtok(NULL, " ");
                 x2 = charToInt(p);
                 drawLine(bmp, pen, x1, y1, x2, y2);
-            } else if (strcmp("rectangle", p) == 0) {
+            } else if (strcmp("rectangle", p) == 0) {  // draw rectangle
                 int x1 = 0, y1 = 0, width = 0, height = 0;
                 p = strtok(NULL, " ");
                 y1 = charToInt(p);
@@ -100,7 +100,7 @@ int main() {
                 p = strtok(NULL, " ");
                 height = charToInt(p);
                 drawRectangle(bmp, pen, x1, y1, height, width);
-            } else if (strcmp("triangle", p) == 0) {
+            } else if (strcmp("triangle", p) == 0) {  // draw triangle
                 int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
                 Point p1, p2, p3;
                 p = strtok(NULL, " ");
@@ -123,13 +123,12 @@ int main() {
                 p3.y = y3;
                 drawTriangle(bmp, pen, p1, p2, p3);
             }
-        } else if (strcmp("fill", p) == 0) {
+        } else if (strcmp("fill", p) == 0) {  // fill
+            pixel color;
             p = strtok(NULL, " ");
             int y = charToInt(p);
             p = strtok(NULL, " ");
             int x = charToInt(p);
-            int height = bmp->img->height;
-            pixel color;
             color.R = bmp->img->pix[x][y].R;
             color.G = bmp->img->pix[x][y].G;
             color.B = bmp->img->pix[x][y].B;
