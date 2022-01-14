@@ -4,10 +4,11 @@
 #include "bmp_header.h"
 
 #define MAXLEN 100
+#define DEC 10
 
 void addNull(char *);
 
-void swap(int *,int *);
+void swapNr(int *, int *);
 
 BMP * editCommand(char *, BMP *);
 

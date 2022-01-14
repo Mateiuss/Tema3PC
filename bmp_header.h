@@ -4,8 +4,7 @@
 */
 #pragma pack(1)
 
-typedef struct 
-{
+typedef struct {
     unsigned char  fileMarker1; /* 'B' */
     unsigned char  fileMarker2; /* 'M' */
     unsigned int   bfSize; /* File's size */
@@ -14,13 +13,12 @@ typedef struct
     unsigned int   imageDataOffset; /* Offset to the start of image data */
 } bmp_fileheader;
 
-typedef struct 
-{
+typedef struct {
     unsigned int   biSize; /* Size of the info header - 40 bytes */
     signed int     width; /* Width of the image */
     signed int     height; /* Height of the image */
     unsigned short planes;
-    unsigned short bitPix; /* Number of bits per pixel = 3 * 8 (for each channel R, G, B we need 8 bits */
+    unsigned short bitPix; /* Number of bits per pixel = 3 * 8 */
     unsigned int   biCompression; /* Type of compression */
     unsigned int   biSizeImage; /* Size of the image data */
     int            biXPelsPerMeter;
@@ -29,28 +27,24 @@ typedef struct
     unsigned int   biClrImportant;
 } bmp_infoheader;
 
-typedef struct
-{
+typedef struct {
     unsigned char B, G, R;
 } pixel;
 
-typedef struct
-{
+typedef struct {
     pixel **pix;
     int height, width;
 } Image;
 
-typedef struct
-{
+typedef struct {
     Image *img;
     bmp_fileheader *fileH;
     bmp_infoheader *infoH;
 } BMP;
 
-typedef struct 
-{
+typedef struct {
     pixel color;
-    char width;
+    int width;
 } Pen;
 
 #pragma pack()

@@ -1,32 +1,28 @@
 #include "headers.h"
 
-void addNull(char *p)
-{
+void addNull(char *p) {
     if (p[strlen(p) - 1] == '\n') {
         p[strlen(p) - 1] = 0;
-    }  
+    }
 }
 
-void swap(int *x, int *y)
-{
+void swapNr(int *x, int *y) {
     int aux = *x;
     *x = *y;
     *y = aux;
 }
 
-int charToInt(char *num)
-{
+int charToInt(char *num) {
     int res = 0;
     int pow = 1;
-    for (int i = strlen(num) - 1; i >= 0; i--) {
+    for (int i = (int)strlen(num) - 1; i >= 0; i--) {
         res = pow * (num[i] - '0') + res;
-        pow *= 10;
+        pow *= DEC;
     }
     return res;
 }
 
-BMP *editCommand(char *p, BMP *bmp)
-{
+BMP *editCommand(char *p, BMP *bmp) {
     FILE *fp = fopen(p, "rb");
     if (fp == NULL) {
         return NULL;
@@ -37,7 +33,7 @@ BMP *editCommand(char *p, BMP *bmp)
         fclose(fp);
         return NULL;
     }
-        
+
     bmp->infoH = malloc(sizeof(bmp_infoheader));
     if (bmp->infoH == NULL) {
         fclose(fp);
@@ -45,7 +41,7 @@ BMP *editCommand(char *p, BMP *bmp)
     }
 
     bmp->img = malloc(sizeof(Image));
-    if(bmp->img == NULL) {
+    if (bmp->img == NULL) {
         fclose(fp);
         return NULL;
     }
@@ -70,7 +66,7 @@ BMP *editCommand(char *p, BMP *bmp)
         fclose(fp);
         return NULL;
     }
-    for (int i = height - 1; i >= 0; i--) {
+    for (int i = 0; i < height; i++) {
         bmp->img->pix[i] = (pixel *) malloc(sizeof(pixel) * width);
         if (bmp->img->pix[i] == NULL) {
             for (int j = 0; j < i; j++) {
@@ -90,8 +86,7 @@ BMP *editCommand(char *p, BMP *bmp)
     return bmp;
 }
 
-int saveCommand(char *p, BMP *bmp)
-{
+int saveCommand(char *p, BMP *bmp) {
     FILE *fp = fopen(p, "wb");
     if (fp == NULL) {
         return 0;
@@ -106,7 +101,7 @@ int saveCommand(char *p, BMP *bmp)
     fwrite(bmp->fileH, sizeof(bmp_fileheader), 1, fp);
     fwrite(bmp->infoH, sizeof(bmp_infoheader), 1, fp);
 
-    for (int i = bmp->img->height -1; i >=0; i--) {
+    for (int i = 0; i < bmp->img->height; i++) {
         fwrite(bmp->img->pix[i], sizeof(pixel), bmp->img->width, fp);
         for (int j = 1; j <= paddPerRow; j++) {
             putc(0, fp);
@@ -117,8 +112,7 @@ int saveCommand(char *p, BMP *bmp)
     return 1;
 }
 
-void freeBMP(BMP *bmp)
-{
+void freeBMP(BMP *bmp) {
     free(bmp->fileH);
     free(bmp->infoH);
     for (int i = 0; i < bmp->img->height; i++) {
@@ -129,9 +123,8 @@ void freeBMP(BMP *bmp)
     free(bmp);
 }
 
-int insertCommand(BMP *bmp, char *p, int x, int y)
-{
-    BMP *insBMP;
+int insertCommand(BMP *bmp, char *p, int x, int y) {
+    BMP *insBMP = NULL;
     insBMP = malloc(sizeof(BMP));
     if (insBMP == NULL) {
         return 0;
@@ -146,10 +139,10 @@ int insertCommand(BMP *bmp, char *p, int x, int y)
     int w2 = insBMP->img->width;
     int h2 = insBMP->img->height;
 
-    int x1 = h1 - x - 1;
-    int x2 = h2 - 1;
+    int x1 = x;
+    int x2 = 0;
 
-    for ( ; x1 >= 0 && x2 >= 0; x1--, x2--) {
+    for ( ; x1 < h1 && x2 < h2; x1++, x2++) {
         int k1 = y, k2 = 0;
         for ( ; k1 < w1 && k2 < w2; k1++, k2++) {
             bmp->img->pix[x1][k1].R = insBMP->img->pix[x2][k2].R;
@@ -162,8 +155,7 @@ int insertCommand(BMP *bmp, char *p, int x, int y)
     return 1;
 }
 
-void fillPenStroke(BMP *bmp, Pen *pen, int x, int y)
-{
+void fillPenStroke(BMP *bmp, Pen *pen, int x, int y) {
     int height = bmp->img->height;
     int width = bmp->img->width;
     int side = pen->width;
@@ -180,54 +172,51 @@ void fillPenStroke(BMP *bmp, Pen *pen, int x, int y)
     }
 }
 
-void drawLine(BMP *bmp, Pen *pen, int x1, int y1, int x2,int y2)
-{
+void drawLine(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2) {
     int height = bmp->img->height;
     int width = bmp->img->width;
 
-    fillPenStroke(bmp, pen, height - 1 - x1, y1);
-    fillPenStroke(bmp, pen, height - 1 - x2, y2);
+    fillPenStroke(bmp, pen, x1, y1);
+    fillPenStroke(bmp, pen, x2, y2);
 
     if (x1 == x2) {
         if (y2 < y1) {
-            swap(&y1, &y2);
+            swapNr(&y1, &y2);
         }
         for (int i = y1; i <= y2; i++) {
-            fillPenStroke(bmp, pen, height - 1 - x1, i);
+            fillPenStroke(bmp, pen, x1, i);
         }
-    }
-    else if (y1 == y2) {
+    } else if (y1 == y2) {
         if (x2 < x1) {
-            swap(&x1, &x2);
+            swapNr(&x1, &x2);
         }
         for (int i = x1; i <= x2; i++) {
-            fillPenStroke(bmp, pen, height - 1 - i, y1);
+            fillPenStroke(bmp, pen, i, y1);
         }
-    }
-    else {
+    } else {
         int intervalX = abs(x2 - x1);
         int intervalY = abs(y2 - y1);
 
         if (intervalX > intervalY) {
             if (x2 < x1) {
-                swap(&x2, &x1);
-                swap(&y2, &y1);
+                swapNr(&x2, &x1);
+                swapNr(&y2, &y1);
             }
             for (int i = x1 + 1; i < x2; i++) {
                 int j = ((y2 - y1) * (i - x1) + y1 * (x2 - x1)) / (x2 - x1);
                 if (j >= 0 && j < width) {
-                    fillPenStroke(bmp, pen, height - 1 - i, j);
+                    fillPenStroke(bmp, pen, i, j);
                 }
             }
         } else {
             if (y2 < y1) {
-                swap(&y2, &y1);
-                swap(&x2, &x1);
+                swapNr(&y2, &y1);
+                swapNr(&x2, &x1);
             }
             for (int i = y1 + 1; i < y2; i++) {
                 int j = ((x2 - x1) * (i - y1) + x1 * (y2 - y1)) / (y2 - y1);
                 if (j >= 0 && j < height) {
-                    fillPenStroke(bmp, pen, height - 1 - j, i);
+                    fillPenStroke(bmp, pen, j, i);
                 }
             }
         }
@@ -245,15 +234,13 @@ void drawRectangle(BMP *bmp, Pen *pen, int x1, int y1, int height, int width) {
     drawLine(bmp, pen, x1, y1, x4, y4);
 }
 
-void drawTriangle(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2, int x3, int y3)
-{
+void drawTriangle(BMP *bmp, Pen *pen, int x1, int y1, int x2, int y2, int x3, int y3) {
     drawLine(bmp, pen, x1, y1, x2, y2);
     drawLine(bmp, pen, x2, y2, x3, y3);
     drawLine(bmp, pen, x3, y3, x1, y1);
 }
 
-int samePixel(BMP *bmp, pixel *color, int x, int y)
-{
+int samePixel(BMP *bmp, pixel *color, int x, int y) {
     if (bmp->img->pix[x][y].R != color->R)
         return 0;
     if (bmp->img->pix[x][y].G != color->G)
@@ -263,8 +250,7 @@ int samePixel(BMP *bmp, pixel *color, int x, int y)
     return 1;
 }
 
-void fill(BMP *bmp, Pen *pen, pixel *color, int x, int y)
-{
+void fill(BMP *bmp, Pen *pen, pixel *color, int x, int y) {
     bmp->img->pix[x][y].B = pen->color.B;
     bmp->img->pix[x][y].G = pen->color.G;
     bmp->img->pix[x][y].R = pen->color.R;
