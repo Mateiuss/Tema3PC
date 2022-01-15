@@ -170,7 +170,9 @@ int insertCommand(BMP *bmp, char *p, int x, int y) {
     int x1 = x;
     int x2 = 0;
 
-    // Adaug peste imaginea initiala cea de-a doua imagine
+    /* Adaug peste imaginea initiala cea de-a doua imagine. In prima imagine
+    pornesc de la pixelul dat ca parametru, iar in cea de-a doua pornesc
+    de la pixelul din stanga-jos al imaginii. */
     for ( ; x1 < h1 && x2 < h2; x1++, x2++) {
         int k1 = y, k2 = 0;
         for ( ; k1 < w1 && k2 < w2; k1++, k2++) {
@@ -304,23 +306,27 @@ int samePixel(BMP *bmp, pixel *color, int x, int y) {
 /* Functie care face fill la imagine incepand de la pixelul (x,y) cu culoarea
 memorata in zona de memorie pointata de catre color */
 void fill(BMP *bmp, Pen *pen, pixel *color, int x, int y) {
+    // Colorez pixelul de coordonate (x,y) cu culoarea salvata in pen->color
     bmp->img->pix[x][y].B = pen->color.B;
     bmp->img->pix[x][y].G = pen->color.G;
     bmp->img->pix[x][y].R = pen->color.R;
 
+    // Inaltimea, respectiv latimea imaginii
     int height = bmp->img->height;
     int width = bmp->img->width;
 
-    if (x - 1 >= 0 && samePixel(bmp, color, x - 1, y)) {
+    /* Verific daca pixelii din jur sunt de aceeasi culoare si daca acestia
+    exista sau daca am iesit din matrice */
+    if (x - 1 >= 0 && samePixel(bmp, color, x - 1, y)) {      // jos
         fill(bmp, pen, color, x - 1, y);
     }
-    if (x + 1 < height && samePixel(bmp, color, x + 1, y)) {
+    if (x + 1 < height && samePixel(bmp, color, x + 1, y)) {  // sus
         fill(bmp, pen, color, x + 1, y);
     }
-    if (y - 1 >= 0 && samePixel(bmp, color, x, y - 1)) {
+    if (y - 1 >= 0 && samePixel(bmp, color, x, y - 1)) {      // stanga
         fill(bmp, pen, color, x, y - 1);
     }
-    if (y + 1 < width && samePixel(bmp, color, x, y + 1)) {
+    if (y + 1 < width && samePixel(bmp, color, x, y + 1)) {   // dreapta
         fill(bmp, pen, color, x, y + 1);
     }
 }
